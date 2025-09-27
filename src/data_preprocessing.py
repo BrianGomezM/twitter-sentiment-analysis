@@ -1,54 +1,32 @@
-import re
-import pandas as pd
-from db_connection import get_connection
-import emoji
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Input
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
 
-def limpiar_texto(texto):
-    if texto is None:
-        return ""
+def preprocess(df):
 
-    # Quitar emojis con la librería emoji
-    texto = emoji.replace_emoji(texto, replace=" ")
+    #Vectorizar texto
+    vectorizer = TfidfVectorizer(max_features=20000, ngram_range=(1,2))
+    X = vectorizer.fit_transform(df["text_clean"])
 
-    # Quitar caracteres no deseados
-    texto = re.sub(r"[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ.,!?¿¡\s]", " ", texto)
+    #Extraer etiquetas
+    y = df["airline_sentiment"]
 
-    # Normalizar espacios
-    texto = re.sub(r"\s+", " ", texto).strip()
+    #Etiquetas a números 0, 1, 2
+    encoder = LabelEncoder()
+    y_encoded = encoder.fit_transform(y)
 
-    return texto
+    #Dividir en train y test (70%, 30%) - stratify: Para que se dividan de forma balanceada
+    X_train, X_temp, y_train, y_temp = train_test_split(
+        X, y_encoded, test_size=0.3, stratify=y_encoded, random_state=42
+    )
+    #Dividir el 30% en val y test (15%, 15%)
+    X_val, X_test, y_val, y_test = train_test_split(
+        X_temp, y_temp, test_size=0.5, stratify=y_temp, random_state=42
+    )
 
-
-# 1. Conectar
-conn = get_connection()
-cursor = conn.cursor()
-
-# 2. Leer tabla original
-df = pd.read_sql("SELECT tweet_id, airline_sentiment, text FROM tweets", conn)
-
-# 3. Limpiar texto
-df["text_clean"] = df["text"].apply(limpiar_texto)
-
-# 4. Crear nueva tabla Cleaned_Tweets (si no existe)
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS Cleaned_Tweets (
-    tweet_id BIGINT PRIMARY KEY,
-    airline_sentiment VARCHAR(50),
-    text_clean TEXT
-)
-""")
-
-# 5. Insertar los datos en Cleaned_Tweets
-for _, row in df.iterrows():
-    cursor.execute("""
-        INSERT INTO Cleaned_Tweets (tweet_id, airline_sentiment, text_clean)
-        VALUES (%s, %s, %s)
-        ON DUPLICATE KEY UPDATE 
-            text_clean = VALUES(text_clean)
-    """, (row["tweet_id"], row["airline_sentiment"], row["text_clean"]))
-
-conn.commit()
-cursor.close()
-conn.close()
-
-print("✅ Tweets limpiados y guardados en la tabla Cleaned_Tweets")
+    return X_train, X_val, X_test, y_train, y_val, y_test, encoder, vectorizer

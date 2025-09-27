@@ -1,23 +1,18 @@
-import re
-import unicodedata
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Input
 
-def limpiar_texto(texto):
-    # 1. Eliminar emojis y caracteres especiales (rangos Unicode)
-    texto = re.sub(r"["
-                   u"\U0001F600-\U0001F64F"  # emoticonos
-                   u"\U0001F300-\U0001F5FF"  # símbolos y pictogramas
-                   u"\U0001F680-\U0001F6FF"  # transporte y mapas
-                   u"\U0001F1E0-\U0001F1FF"  # banderas
-                   "]+", " ", texto, flags=re.UNICODE)
-    
-    # 2. Quitar todo lo que no sea letras, números, signos de puntuación básicos
-    texto = re.sub(r"[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ.,!?¿¡\s]", " ", texto)
-
-    # 3. Normalizar espacios
-    texto = re.sub(r"\s+", " ", texto).strip()
-
-    return texto
-
-# Ejemplo
-ejemplo = "Me encantó 😍 el servicio!!! 💯🔥 #Excelente"
-print(limpiar_texto(ejemplo))
+def build_mlp(input_dim, num_classes=3):
+    model = Sequential([
+        Input(shape=(input_dim,)),
+        Dense(512, activation='relu'),
+        Dropout(0.5),
+        Dense(256, activation='relu'),
+        Dropout(0.5),
+        Dense(num_classes, activation='softmax')
+    ])
+    model.compile(
+        optimizer='adam',
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    return model
