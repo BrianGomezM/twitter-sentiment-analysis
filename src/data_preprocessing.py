@@ -1,16 +1,13 @@
 import re
 import pandas as pd
+from db_connection import get_connection
 import emoji
-from sqlalchemy import create_engine, text
 
-# ---------------------------------------
-# Función para limpiar texto
-# ---------------------------------------
 def limpiar_texto(texto):
     if texto is None:
         return ""
 
-    # Quitar emojis
+    # Quitar emojis con la librería emoji
     texto = emoji.replace_emoji(texto, replace=" ")
 
     # Quitar caracteres no deseados
@@ -21,49 +18,37 @@ def limpiar_texto(texto):
 
     return texto
 
-# ---------------------------------------
-# Crear motor SQLAlchemy
-# ---------------------------------------
-engine = create_engine(
-    "postgresql+psycopg2://redes_neuronales_proyecto_user:"
-    "qgZaEQHbnkqio5wojYT9VldBH81XYn1k@"
-    "dpg-d3bmi5ggjchc738ij1m0-a.oregon-postgres.render.com:5432/"
-    "redes_neuronales_proyecto"
-)
 
-# ---------------------------------------
-# Leer tabla original
-# ---------------------------------------
-df = pd.read_sql("SELECT tweet_id, airline_sentiment, text FROM tweets", engine)
+# 1. Conectar
+conn = get_connection()
+cursor = conn.cursor()
 
-# ---------------------------------------
-# Limpiar texto
-# ---------------------------------------
+# 2. Leer tabla original
+df = pd.read_sql("SELECT tweet_id, airline_sentiment, text FROM tweets", conn)
+
+# 3. Limpiar texto
 df["text_clean"] = df["text"].apply(limpiar_texto)
 
-# ---------------------------------------
-# Crear tabla Cleaned_Tweets si no existe
-# ---------------------------------------
-with engine.connect() as conn:
-    conn.execute(text("""
-        CREATE TABLE IF NOT EXISTS Cleaned_Tweets (
-            tweet_id BIGINT PRIMARY KEY,
-            airline_sentiment VARCHAR(50),
-            text_clean TEXT
-        )
-    """))
-    conn.commit()
-
-# ---------------------------------------
-# Inserción masiva optimizada
-# ---------------------------------------
-# to_sql con method='multi' hace INSERTs en bloque
-df.to_sql(
-    "Cleaned_Tweets",
-    engine,
-    if_exists="append",  # agrega los nuevos registros
-    index=False,
-    method='multi'       # inserción en bloques
+# 4. Crear nueva tabla Cleaned_Tweets (si no existe)
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Cleaned_Tweets (
+    tweet_id BIGINT PRIMARY KEY,
+    airline_sentiment VARCHAR(50),
+    text_clean TEXT
 )
+""")
+
+# 5. Insertar los datos en Cleaned_Tweets
+for _, row in df.iterrows():
+    cursor.execute("""
+        INSERT INTO Cleaned_Tweets (tweet_id, airline_sentiment, text_clean)
+        VALUES (%s, %s, %s)
+        ON DUPLICATE KEY UPDATE 
+            text_clean = VALUES(text_clean)
+    """, (row["tweet_id"], row["airline_sentiment"], row["text_clean"]))
+
+conn.commit()
+cursor.close()
+conn.close()
 
 print("✅ Tweets limpiados y guardados en la tabla Cleaned_Tweets")
