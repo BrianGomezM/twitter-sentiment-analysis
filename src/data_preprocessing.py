@@ -2,22 +2,7 @@ import re
 import pandas as pd
 from db_connection import get_connection
 import emoji
-
-def limpiar_texto(texto):
-    if texto is None:
-        return ""
-
-    # Quitar emojis con la librería emoji
-    texto = emoji.replace_emoji(texto, replace=" ")
-
-    # Quitar caracteres no deseados
-    texto = re.sub(r"[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ.,!?¿¡\s]", " ", texto)
-
-    # Normalizar espacios
-    texto = re.sub(r"\s+", " ", texto).strip()
-
-    return texto
-
+from utils import limpiar_texto
 
 # 1. Conectar
 conn = get_connection()
