@@ -30,18 +30,24 @@ def main():
         print("-" * 30)
         cleaner = DataCleaner()
         df_clean = cleaner.clean_tweet_data()
-        
-        # 2. PREPROCESAMIENTO
+
+        # 2. PREPROCESAMIENTO (sin validación)
         print("\n2️⃣  FASE 2: PREPROCESAMIENTO")
         print("-" * 30)
         preprocessor = DataPreprocessor()
-        X_train, X_val, X_test, y_train, y_val, y_test, encoder, vectorizer = preprocessor.prepare_data(df_clean)
-        
-        # 3. ENTRENAMIENTO
+        X_train, X_test, y_train, y_test, encoder, vectorizer = preprocessor.prepare_data(df_clean)
+
+        # 3. ENTRENAMIENTO DEL MODELO MLP
         print("\n3️⃣  FASE 3: ENTRENAMIENTO DEL MODELO MLP")
         print("-" * 30)
         trainer = ModelTrainer()
-        model, history = trainer.train_model(X_train, y_train, X_val, y_val)
+        model, history = trainer.train_model(X_train, y_train)  # ya no pasamos X_val ni y_val
+
+        # 4. EVALUACIÓN
+        print("\n4️⃣  FASE 4: EVALUACIÓN DEL MODELO")
+        print("-" * 30)
+        evaluator = ModelEvaluator()
+        y_pred = evaluator.evaluate_model(model, X_test, y_test, encoder)
         
         # 4. EVALUACIÓN
         print("\n4️⃣  FASE 4: EVALUACIÓN DEL MODELO")
@@ -57,6 +63,16 @@ def main():
         print("\n" + "="*60)
         print("✅ PIPELINE COMPLETADO EXITOSAMENTE")
         print("="*60)
+
+        # Después de entrenar
+        final_loss = history.history["loss"][-1]
+        final_acc = history.history["accuracy"][-1]
+
+        final_val_loss = history.history["val_loss"][-1]
+        final_val_acc = history.history["val_accuracy"][-1]
+
+        
+
         
     except Exception as e:
         print(f"\n❌ ERROR en el pipeline: {e}")
