@@ -16,7 +16,7 @@ def build_mlp_model(input_dim, num_classes=3):
     Returns:
         tensorflow.keras.Model: Modelo MLP compilado
     """
-    print(f"🧠 Construyendo MLP con {input_dim} características de entrada y {num_classes} clases")
+    print(f"Construyendo MLP con {input_dim} características de entrada y {num_classes} clases")
     
     model = Sequential([
         Input(shape=(input_dim,)),
@@ -46,7 +46,7 @@ def build_mlp_model(input_dim, num_classes=3):
         metrics=MODEL_CONFIG['metrics']
     )
     
-    print("✅ Modelo MLP construido y compilado")
+    print("Modelo MLP construido y compilado")
     model.summary()
     
     return model

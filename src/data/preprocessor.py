@@ -31,12 +31,12 @@ class DataPreprocessor:
         
         # Codificar etiquetas
         y_encoded = self.encoder.fit_transform(y)
-        print(f"🔢 Etiquetas codificadas: {dict(zip(self.encoder.classes_, range(len(self.encoder.classes_))))}")
+        print(f"Etiquetas codificadas: {dict(zip(self.encoder.classes_, range(len(self.encoder.classes_))))}")
         
         # Vectorizar texto
-        print("🔤 Vectorizando texto...")
+        print("Vectorizando texto...")
         X_vectorized = self.vectorizer.fit_transform(X)
-        print(f"📊 Dimensiones de la matriz TF-IDF: {X_vectorized.shape}")
+        print(f"Dimensiones de la matriz TF-IDF: {X_vectorized.shape}")
         
         # Dividir solo en train y test
         X_train, X_test, y_train, y_test = train_test_split(
@@ -46,7 +46,7 @@ class DataPreprocessor:
             stratify=y_encoded
         )
         
-        print(f"📈 División de datos:")
+        print(f"División de datos:")
         print(f"   - Entrenamiento: {X_train.shape[0]} muestras")
         print(f"   - Prueba: {X_test.shape[0]} muestras")
         

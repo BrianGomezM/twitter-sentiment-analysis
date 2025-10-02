@@ -21,7 +21,7 @@ class DatabaseConnection:
             conn = psycopg2.connect(**self.config)
             return conn
         except Exception as e:
-            print(f"❌ Error conectando a la base de datos: {e}")
+            print(f"Error conectando a la base de datos: {e}")
             raise
     
     def get_engine(self):

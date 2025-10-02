@@ -25,7 +25,7 @@ class ModelTrainer:
         Returns:
             tuple: Modelo entrenado e historial de entrenamiento
         """
-        print("🚀 Iniciando entrenamiento del modelo...")
+        print("Iniciando entrenamiento del modelo...")
         start_time = time.time()
         
         # Construir modelo
@@ -46,8 +46,8 @@ class ModelTrainer:
         )
         
         training_time = time.time() - start_time
-        print(f"✅ Entrenamiento completado en {training_time:.2f} segundos")
-        print(f"✅ Entrenamiento completado en {training_time:.2f} segundos")
+        print(f"Entrenamiento completado en {training_time:.2f} segundos")
+        print(f"Entrenamiento completado en {training_time:.2f} segundos")
 
 # 🔥 Resultados finales
         final_loss = history.history["loss"][-1]
@@ -57,8 +57,8 @@ class ModelTrainer:
 
         print("\n📊 RESULTADOS FINALES DEL MODELO")
         print("="*40)
-        print(f"✅ Loss de entrenamiento: {final_loss:.4f}")
-        print(f"✅ Accuracy de entrenamiento: {final_acc:.4f}")
-        print(f"✅ Loss de validación: {final_val_loss:.4f}")
-        print(f"✅ Accuracy de validación: {final_val_acc:.4f}")
+        print(f"Loss de entrenamiento: {final_loss:.4f}")
+        print(f"Accuracy de entrenamiento: {final_acc:.4f}")
+        print(f"Loss de validación: {final_val_loss:.4f}")
+        print(f"Accuracy de validación: {final_val_acc:.4f}")
         return model, history

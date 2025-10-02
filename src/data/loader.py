@@ -18,7 +18,7 @@ class DataLoader:
         """
         query = "SELECT tweet_id, airline_sentiment, text FROM tweets"
         df = pd.read_sql(query, self.engine)
-        print(f"✅ Datos cargados: {len(df)} tweets")
+        print(f"Datos cargados: {len(df)} tweets")
         return df
     
     def load_cleaned_data(self):
@@ -29,5 +29,5 @@ class DataLoader:
         """
         query = "SELECT tweet_id, airline_sentiment, text_clean FROM Cleaned_Tweets"
         df = pd.read_sql(query, self.engine)
-        print(f"✅ Datos limpios cargados: {len(df)} tweets")
+        print(f"Datos limpios cargados: {len(df)} tweets")
         return df

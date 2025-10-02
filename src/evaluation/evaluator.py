@@ -21,7 +21,7 @@ class ModelEvaluator:
             y_test: Etiquetas reales de prueba
             encoder: LabelEncoder usado para codificar etiquetas
         """
-        print("📊 Evaluando modelo en conjunto de prueba...")
+        print("Evaluando modelo en conjunto de prueba...")
         
         # Predecir
         y_pred_proba = model.predict(X_test.toarray())
@@ -29,7 +29,7 @@ class ModelEvaluator:
         
         # Reporte de clasificación
         print("\n" + "="*50)
-        print("📈 REPORTE DE CLASIFICACIÓN")
+        print("REPORTE DE CLASIFICACIÓN")
         print("="*50)
         report = classification_report(y_test, y_pred, 
                                       target_names=encoder.classes_)

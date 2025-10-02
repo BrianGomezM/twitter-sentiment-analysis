@@ -26,7 +26,7 @@ class DataCleaner:
         df = loader.load_raw_data()
         
         # Aplicar limpieza de texto
-        print("🔄 Limpiando texto de los tweets...")
+        print("Limpiando texto de los tweets...")
         df["text_clean"] = df["text"].apply(limpiar_texto)
         
         # Guardar en base de datos
@@ -51,7 +51,7 @@ class DataCleaner:
                 for table in existing_tables:
                     conn.execute(text(f'DROP TABLE IF EXISTS "{table}"'))
                 conn.commit()
-                print("🧹 Tablas duplicadas eliminadas")
+                print("Tablas duplicadas eliminadas")
     
     def _save_cleaned_data(self, df):
         """Guarda los datos limpios usando solo minúsculas"""
@@ -75,4 +75,4 @@ class DataCleaner:
             index=False
         )
         
-        print(f"✅ Tweets limpiados guardados en la tabla {self.table_name}")
+        print(f"Tweets limpiados guardados en la tabla {self.table_name}")
