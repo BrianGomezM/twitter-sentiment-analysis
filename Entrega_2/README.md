@@ -38,8 +38,7 @@ PROJECT STRUCTURE
 │   ├── train_lstm.py
 │   ├── utils.py
 │   └── evaluation.py
-├── notebooks/
-│   └── exploracion.ipynb
+├── main.py
 ├── requirements.txt
 └── README.md
 
