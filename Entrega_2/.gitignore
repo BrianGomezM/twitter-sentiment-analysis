@@ -1,0 +1,43 @@
+# Entorno virtual
+venv/
+.env/
+.venv/
+
+# Archivos del sistema
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+
+# Modelos
+models/
+checkpoints/
+saved_models/
+*.h5
+*.keras
+
+# Notebooks
+.ipynb_checkpoints/
+*.checkpoint.ipynb
+
+# Logs
+logs/
+*.log
+
+# Salidas
+outputs/
+results/
+
+# Dataset (no subir)
+data/*
+!data/.gitkeep
+
+# Config locales
+*.code-workspace
+.idea/
+.vscode/
+
+# Archivos sensibles
+*.env
+.env.*

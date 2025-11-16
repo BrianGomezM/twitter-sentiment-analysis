@@ -114,4 +114,3 @@ AUTHOR
 LICENSE
 ===========================================================
 
-[Specify license if needed, e.g., MIT]
