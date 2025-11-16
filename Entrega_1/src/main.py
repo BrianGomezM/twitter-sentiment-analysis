@@ -1,12 +1,5 @@
 """
-Twitter Sentiment Analysis - Main Script
-Universidad del Valle - Redes Neuronales 2025-2
-
-Este script ejecuta el pipeline completo de análisis de sentimientos:
-1. Carga y limpieza de datos
-2. Preprocesamiento para ML
-3. Entrenamiento del modelo MLP
-4. Evaluación y visualización de resultados
+Twitter Sentiment Analysis - Main Script MEJORADO
 """
 
 from data.cleaner import DataCleaner
@@ -14,15 +7,20 @@ from data.preprocessor import DataPreprocessor
 from training.trainer import ModelTrainer
 from evaluation.evaluator import ModelEvaluator
 from utils.visualization import plot_training_history
+from config import get_active_config, ACTIVE_EXPERIMENT
+
 
 def main():
     """
-    Función principal que ejecuta el pipeline completo
+    Función principal que ejecuta el pipeline completo con configuración dinámica
     """
-    print("="*60)
-    print("🐦 TWITTER SENTIMENT ANALYSIS - MLP")
+    config = get_active_config()
+    
+    print("=" * 60)
+    print("🐦 TWITTER SENTIMENT ANALYSIS - MLP DINÁMICO")
+    print(f"🎯 Configuración activa: {config['name']} ({ACTIVE_EXPERIMENT})")
     print("Universidad del Valle - Redes Neuronales 2025-2")
-    print("="*60)
+    print("=" * 60)
     
     try:
         # 1. LIMPIEZA DE DATOS
@@ -31,16 +29,16 @@ def main():
         cleaner = DataCleaner()
         df_clean = cleaner.clean_tweet_data()
         
-        # 2. PREPROCESAMIENTO
+        # 2. PREPROCESAMIENTO (con config activa)
         print("\n2️⃣  FASE 2: PREPROCESAMIENTO")
         print("-" * 30)
-        preprocessor = DataPreprocessor()
+        preprocessor = DataPreprocessor(custom_text_config=config['text'])
         X_train, X_val, X_test, y_train, y_val, y_test, encoder, vectorizer = preprocessor.prepare_data(df_clean)
         
-        # 3. ENTRENAMIENTO
+        # 3. ENTRENAMIENTO (con config activa)
         print("\n3️⃣  FASE 3: ENTRENAMIENTO DEL MODELO MLP")
         print("-" * 30)
-        trainer = ModelTrainer()
+        trainer = ModelTrainer(custom_config=config)
         model, history = trainer.train_model(X_train, y_train, X_val, y_val)
         
         # 4. EVALUACIÓN
@@ -54,13 +52,13 @@ def main():
         print("-" * 30)
         plot_training_history(history)
         
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("✅ PIPELINE COMPLETADO EXITOSAMENTE")
-        print("="*60)
-        
+        print("=" * 60)
+    
     except Exception as e:
-        print(f"\n❌ ERROR en el pipeline: {e}")
-        raise
+        print(f"❌ Ocurrió un error durante la ejecución del pipeline: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -12,7 +12,7 @@ class DataCleaner:
     
     def __init__(self):
         self.engine = db.get_engine()
-        self.table_name = "cleaned_tweets"  # ← USAR SOLO MINÚSCULAS
+        self.table_name = "cleaned_tweets"
     
     def clean_tweet_data(self):
         """

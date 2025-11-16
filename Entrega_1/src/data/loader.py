@@ -24,10 +24,8 @@ class DataLoader:
     def load_cleaned_data(self):
         """
         Carga los tweets ya limpiados de la base de datos
-        Returns:
-            pandas.DataFrame: DataFrame con tweets limpios
         """
-        query = "SELECT tweet_id, airline_sentiment, text_clean FROM Cleaned_Tweets"
+        query = "SELECT tweet_id, airline_sentiment, text_clean FROM cleaned_tweets"  # ← minúsculas
         df = pd.read_sql(query, self.engine)
         print(f"✅ Datos limpios cargados: {len(df)} tweets")
         return df
