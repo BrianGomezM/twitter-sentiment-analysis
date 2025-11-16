@@ -6,11 +6,11 @@ def run_all_experiments():
     print("\n🚀 Iniciando pruebas automáticas LSTM MEJORADAS...\n")
 
     # ============================================================
-    # 1. Métodos de limpieza a evaluar
+    # 1. Métodos de limpieza a evaluar (MISMO)
     # ============================================================
     cleaning_methods = [
         "clean_minimal",
-        "clean_standard",
+        "clean_standard", 
         "clean_aggressive"
     ]
 
@@ -18,14 +18,14 @@ def run_all_experiments():
     # 2. Hiperparámetros OPTIMIZADOS para mejor estabilidad
     # ============================================================
     hyperparameter_sets = [
-        # Configuración conservadora - mejor para evitar overfitting
-        {"embedding_dim": 50,  "lstm_units": 32,  "dense_units": 16, "epochs": 20, "batch_size": 32},
+        # Configuración CONSERVADORA - mejor generalización
+        {"embedding_dim": 64,  "lstm_units": 48,  "dense_units": 24, "epochs": 25, "batch_size": 64},
         
-        # Configuración balanceada
-        {"embedding_dim": 64,  "lstm_units": 64,  "dense_units": 32, "epochs": 25, "batch_size": 32},
+        # Configuración BALANCEADA - punto óptimo
+        {"embedding_dim": 80,  "lstm_units": 64,  "dense_units": 32, "epochs": 30, "batch_size": 48},
         
-        # Configuración más compleja 
-        {"embedding_dim": 100, "lstm_units": 128, "dense_units": 64, "epochs": 30, "batch_size": 64}
+        # Configuración para TEXTOS COMPLEJOS
+        {"embedding_dim": 100, "lstm_units": 80, "dense_units": 40, "epochs": 35, "batch_size": 32}
     ]
 
     # ============================================================

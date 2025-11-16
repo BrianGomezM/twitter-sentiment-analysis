@@ -53,7 +53,7 @@ INSTALLATION & SETUP
 3. Create a virtual environment (recommended):
     python -m venv env
 4. Activate the environment:
-    Windows: env\Scripts\activate
+    Windows: .\venv\Scripts\Activate.ps1 
     Linux/macOS: source env/bin/activate
 5. Install dependencies:
     pip install -r requirements.txt

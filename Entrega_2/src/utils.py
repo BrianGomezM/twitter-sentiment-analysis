@@ -7,28 +7,41 @@ import numpy as np
 import json
 
 def plot_history(history, model_name, save_path=None):
-    """Gráficas mejoradas con más métricas y estilo profesional"""
-    plt.figure(figsize=(12, 5))
+    """Gráficas MEJORADAS con más métricas"""
+    plt.figure(figsize=(15, 5))
 
     # Gráfica de pérdida
-    plt.subplot(1, 2, 1)
-    plt.plot(history.history["loss"], label="Train", linewidth=2, marker='o', markersize=4)
-    plt.plot(history.history["val_loss"], label="Validation", linewidth=2, marker='s', markersize=4)
-    plt.title(f"{model_name} - Loss", fontsize=14, fontweight='bold')
+    plt.subplot(1, 3, 1)
+    plt.plot(history.history["loss"], label="Train", linewidth=2, marker='o', markersize=3)
+    plt.plot(history.history["val_loss"], label="Validation", linewidth=2, marker='s', markersize=3)
+    plt.title(f"{model_name} - Loss", fontsize=12, fontweight='bold')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True, alpha=0.3)
     
     # Gráfica de accuracy
-    plt.subplot(1, 2, 2)
-    plt.plot(history.history["accuracy"], label="Train", linewidth=2, marker='o', markersize=4)
-    plt.plot(history.history["val_accuracy"], label="Validation", linewidth=2, marker='s', markersize=4)
-    plt.title(f"{model_name} - Accuracy", fontsize=14, fontweight='bold')
+    plt.subplot(1, 3, 2)
+    plt.plot(history.history["accuracy"], label="Train", linewidth=2, marker='o', markersize=3)
+    plt.plot(history.history["val_accuracy"], label="Validation", linewidth=2, marker='s', markersize=3)
+    plt.title(f"{model_name} - Accuracy", fontsize=12, fontweight='bold')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
     plt.grid(True, alpha=0.3)
+
+    # NUEVA: Gráfica de learning rate
+    plt.subplot(1, 3, 3)
+    if 'lr' in history.history:
+        plt.plot(history.history['lr'], label='Learning Rate', color='red', linewidth=2)
+        plt.title('Learning Rate Schedule', fontsize=12, fontweight='bold')
+        plt.xlabel('Epochs')
+        plt.ylabel('LR')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+    else:
+        plt.text(0.5, 0.5, 'LR Constant', ha='center', va='center', transform=plt.gca().transAxes)
+        plt.title('Learning Rate', fontsize=12, fontweight='bold')
 
     plt.tight_layout()
 
@@ -37,21 +50,23 @@ def plot_history(history, model_name, save_path=None):
     
     plt.close()
 
-    # Guardar métricas para análisis
+    # Guardar métricas MEJORADAS
     if save_path:
         metrics = {
             'final_train_loss': float(history.history['loss'][-1]),
             'final_val_loss': float(history.history['val_loss'][-1]),
             'final_train_acc': float(history.history['accuracy'][-1]),
             'final_val_acc': float(history.history['val_accuracy'][-1]),
-            'overfitting_gap': float(history.history['accuracy'][-1] - history.history['val_accuracy'][-1])
+            'overfitting_gap': float(history.history['accuracy'][-1] - history.history['val_accuracy'][-1]),
+            'best_val_accuracy': float(max(history.history['val_accuracy'])),
+            'best_val_epoch': int(np.argmax(history.history['val_accuracy']) + 1)
         }
         
         with open(os.path.join(save_path, 'training_metrics.json'), 'w') as f:
             json.dump(metrics, f, indent=4)
 
 def evaluate_model(model, X_test, y_test, encoder, model_name, save_path=None):
-    """Evaluación mejorada con más métricas"""
+    """Evaluación MEJORADA con más métricas"""
     y_pred = model.predict(X_test, verbose=0)
     y_pred_labels = y_pred.argmax(axis=1)
     y_true = y_test.argmax(axis=1)
@@ -73,8 +88,18 @@ def evaluate_model(model, X_test, y_test, encoder, model_name, save_path=None):
 
     if save_path:
         plt.savefig(os.path.join(save_path, "confusion_matrix.png"), dpi=300, bbox_inches='tight')
+        
+        # Guardar reporte detallado
         with open(os.path.join(save_path, "classification_report.txt"), "w") as file:
             file.write(report)
+        
+        # Guardar matriz de confusión como JSON
+        cm_dict = {
+            'matrix': cm.tolist(),
+            'classes': encoder.classes_.tolist()
+        }
+        with open(os.path.join(save_path, "confusion_matrix.json"), "w") as f:
+            json.dump(cm_dict, f, indent=4)
     
     plt.close()
 
