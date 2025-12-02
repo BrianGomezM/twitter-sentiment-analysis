@@ -18,7 +18,7 @@ def main():
 
     print("\n📌 Paso 2: Ejecución de entrenamientos LSTM MEJORADOS")
     run_all_experiments()
-
+    #d
     print("\n✅ Entrenamiento mejorado completado.")
 
 if __name__ == "__main__":
