@@ -1,0 +1,7 @@
+{
+    "final_train_loss": 0.8522389531135559,
+    "final_val_loss": 0.8704342842102051,
+    "final_train_acc": 0.7262750864028931,
+    "final_val_acc": 0.7181705832481384,
+    "overfitting_gap": 0.008104503154754639
+}

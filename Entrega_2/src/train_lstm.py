@@ -14,16 +14,19 @@ from tensorflow.keras.regularizers import l2
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
-from src.utils import plot_history, evaluate_model
 from sklearn.utils import compute_class_weight
 from sklearn.utils import resample
 from collections import Counter
-
+import sys
 MAX_WORDS = 8000
 MAX_LEN = 40
 #MAX_WORDS = 20000
 #MAX_LEN = 80
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
+from src.utils import plot_history, evaluate_model
 def print_class_distribution(labels, title="Distribución de clases"):
     counts = Counter(labels)
     print(f"\n📊 {title}")
