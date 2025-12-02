@@ -2,6 +2,7 @@
 venv/
 .env/
 .venv/
+Entrega_2/env/
 
 # Archivos del sistema
 __pycache__/
