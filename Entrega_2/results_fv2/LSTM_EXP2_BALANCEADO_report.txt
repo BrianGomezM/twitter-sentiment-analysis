@@ -1,0 +1,18 @@
+Model: LSTM_EXP2_BALANCEADO
+==================================================
+              precision    recall  f1-score   support
+
+    negative     0.8919    0.8350    0.8625      1285
+     neutral     0.8746    0.8794    0.8770      1285
+    positive     0.9007    0.9533    0.9263      1285
+
+    accuracy                         0.8892      3855
+   macro avg     0.8891    0.8892    0.8886      3855
+weighted avg     0.8891    0.8892    0.8886      3855
+
+
+Métricas Resumen:
+F1-Score (macro): 0.8886
+F1-Score (weighted): 0.8886
+Precision (macro): 0.8891
+Recall (macro): 0.8892

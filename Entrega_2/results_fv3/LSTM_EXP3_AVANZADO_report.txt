@@ -1,0 +1,18 @@
+Model: LSTM_EXP3_AVANZADO
+==================================================
+              precision    recall  f1-score   support
+
+    negative     0.9028    0.8163    0.8574      1285
+     neutral     0.8476    0.8918    0.8692      1285
+    positive     0.9098    0.9494    0.9292      1285
+
+    accuracy                         0.8859      3855
+   macro avg     0.8867    0.8859    0.8852      3855
+weighted avg     0.8867    0.8859    0.8852      3855
+
+
+Métricas Resumen:
+F1-Score (macro): 0.8852
+F1-Score (weighted): 0.8852
+Precision (macro): 0.8867
+Recall (macro): 0.8859

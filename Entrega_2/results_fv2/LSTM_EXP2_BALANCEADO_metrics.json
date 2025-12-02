@@ -1,0 +1,11 @@
+{
+    "final_train_loss": 0.2285691201686859,
+    "final_val_loss": 0.540986955165863,
+    "final_train_acc": 0.9688640236854553,
+    "final_val_acc": 0.896562933921814,
+    "overfitting_gap": 0.07230108976364136,
+    "epochs_trained": 50,
+    "best_val_acc": 0.8975356817245483,
+    "best_val_loss": 0.5300963521003723,
+    "best_epoch": 40
+}

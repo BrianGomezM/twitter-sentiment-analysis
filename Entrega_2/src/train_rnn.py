@@ -1,4 +1,3 @@
-# src/train_rnn.py
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -14,51 +13,35 @@ MAX_WORDS = 8000
 MAX_LEN = 40
 
 def train_rnn():
-    print("\n🔷 Entrenando modelo RNN (SimpleRNN)...")
-
     df = pd.read_csv("data/processed_tweets.csv")
-
     texts = df["clean_standard"].astype(str)
     labels = df["airline_sentiment"]
-
-    # codificar etiquetas
     encoder = LabelEncoder()
     y = to_categorical(encoder.fit_transform(labels))
-
-    # tokenizar
     tokenizer = Tokenizer(num_words=MAX_WORDS)
     tokenizer.fit_on_texts(texts)
     sequences = tokenizer.texts_to_sequences(texts)
     X = pad_sequences(sequences, maxlen=MAX_LEN)
-
-    # dividir dataset
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
-
-    # modelo
     model = Sequential([
         Embedding(MAX_WORDS, 64, input_length=MAX_LEN),
         SimpleRNN(64, return_sequences=False),
         Dense(32, activation="relu"),
         Dense(3, activation="softmax")
     ])
-
     model.compile(
         loss="categorical_crossentropy",
         optimizer="adam",
         metrics=["accuracy"]
     )
-
     history = model.fit(
         X_train, y_train,
         epochs=6,
         batch_size=64,
         validation_split=0.2
     )
-
-    # evaluación
     evaluate_model(model, X_test, y_test, encoder, "SimpleRNN")
     plot_history(history, "SimpleRNN")
-
     return model
