@@ -1,0 +1,41 @@
+{
+    "model_name": "LSTM_EXP1_BASICO",
+    "global_metrics": {
+        "accuracy": 0.7696100403406544,
+        "f1_macro": 0.7689568868113881,
+        "f1_weighted": 0.7689578422564316,
+        "precision_macro": 0.7687400596481512,
+        "recall_macro": 0.7696053247273236
+    },
+    "class_metrics": {
+        "negative": 0.7590847913862718,
+        "neutral": 0.7083333333333334,
+        "positive": 0.8413978494623656
+    },
+    "confidence_analysis": {
+        "mean": 0.8138189315795898,
+        "std": 0.14787080883979797,
+        "min": 0.35554471611976624,
+        "max": 0.9998218417167664,
+        "pct_high_conf": 28.328103989242493,
+        "pct_low_conf": 12.14701927386822
+    },
+    "confusion_matrix": [
+        [
+            564,
+            121,
+            58
+        ],
+        [
+            122,
+            527,
+            95
+        ],
+        [
+            42,
+            76,
+            626
+        ]
+    ],
+    "error_analysis": {
+        "negative \u2192 neutral": 

@@ -1,0 +1,35 @@
+MODEL: LSTM_EXP1_BASICO
+============================================================
+
+MÉTRICAS GLOBALES:
+----------------------------------------
+Accuracy:           0.7696
+F1-Score (macro):   0.7690
+F1-Score (weighted): 0.7690
+Precision (macro):  0.7687
+Recall (macro):     0.7696
+
+REPORTE DETALLADO POR CLASE:
+------------------------------------------------------------
+              precision  recall  f1-score   support
+negative         0.7747  0.7591    0.7668  743.0000
+neutral          0.7279  0.7083    0.7180  744.0000
+positive         0.8036  0.8414    0.8221  744.0000
+accuracy         0.7696  0.7696    0.7696    0.7696
+macro avg        0.7687  0.7696    0.7690 2231.0000
+weighted avg     0.7687  0.7696    0.7690 2231.0000
+
+ACCURACY POR CLASE:
+----------------------------------------
+negative: 0.7591
+neutral: 0.7083
+positive: 0.8414
+
+ANÁLISIS DE CONFIANZA:
+----------------------------------------
+mean: 0.8138
+std: 0.1479
+min: 0.3555
+max: 0.9998
+pct_high_conf: 28.3281
+pct_low_conf: 12.1470

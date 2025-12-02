@@ -51,7 +51,7 @@ INSTALLATION & SETUP
 2. Navigate to the project folder:
     cd twitter_sentiment_analysis
 3. Create a virtual environment (recommended):
-    python -m venv env
+    py -3.11 -m venv venv  
 4. Activate the environment:
     Windows: .\venv\Scripts\Activate.ps1 
     Linux/macOS: source env/bin/activate
