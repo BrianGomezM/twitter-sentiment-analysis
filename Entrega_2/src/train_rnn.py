@@ -22,16 +22,8 @@ from collections import Counter
 MAX_WORDS = 8000
 MAX_LEN = 40
 
-
-# ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-# if ROOT not in sys.path:
-#     sys.path.insert(0, ROOT)
-
 from src.utils import plot_history, evaluate_model
 
-# -----------------------------------------------------
-#  UTILIDADES
-# -----------------------------------------------------
 
 def print_class_distribution(labels, title="Distribución de clases"):
     counts = Counter(labels)
@@ -74,9 +66,6 @@ def smart_balance_dataset(df, label_col="airline_sentiment"):
     return df_final
 
 
-# -----------------------------------------------------
-#  MODELO RNN SIN MEMORIA
-# -----------------------------------------------------
 
 def create_rnn_model(
     embedding_dim,
@@ -86,16 +75,14 @@ def create_rnn_model(
     max_len=MAX_LEN
 ):
 
-
     model = Sequential([
         Embedding(max_words, embedding_dim, input_length=max_len),
-        Dropout(0.4),
+        Dropout(0.2),
 
-        # NN SIN memoria
         SimpleRNN(
             rnn_units,
             activation="tanh",
-            dropout=0.3,
+            dropout=0.2,
             kernel_regularizer=l2(0.003)
         ),
 
@@ -120,12 +107,8 @@ def create_rnn_model(
     return model
 
 
-# -----------------------------------------------------
-#  ENTRENAMIENTO PRINCIPAL
-# -----------------------------------------------------
 
 def train_rnn(
-    cleaning_method="clean_standard",
     embedding_dim=64,
     rnn_units=64,
     dense_units=32,
@@ -134,13 +117,13 @@ def train_rnn(
     use_class_weights=True
 ):
 
-    print(f"\n Entrenando RNN SIN MEMORIA con limpieza: {cleaning_method}")
+    print(f"\n🚀 Entrenando RNN SIN MEMORIA")
 
     df = pd.read_csv("data/processed_tweets.csv")
 
     df = smart_balance_dataset(df, "airline_sentiment")
 
-    texts = df[cleaning_method].astype(str)
+    texts = df["clean_text"].astype(str)
     labels = df["airline_sentiment"]
 
     print_class_distribution(labels, title="Distribución final para entrenamiento")
@@ -165,28 +148,27 @@ def train_rnn(
             y=y_indices
         )
         class_weights = {i: float(w) for i, w in enumerate(class_weights)}
-        print("\n Pesos por clase:", class_weights)
+        print("\n⚖️ Pesos por clase:", class_weights)
     else:
         class_weights = None
 
-    # Crear carpeta
+
     experiment_dir = "experiments_rnn"
     os.makedirs(experiment_dir, exist_ok=True)
 
-    folder_name = f"{cleaning_method}_emb{embedding_dim}_rnn{rnn_units}_ep{epochs}"
+    folder_name = f"clean_emb{embedding_dim}_rnn{rnn_units}_ep{epochs}"
     save_path = os.path.join(experiment_dir, folder_name)
     os.makedirs(save_path, exist_ok=True)
 
-    # Crear modelo
     model = create_rnn_model(embedding_dim, rnn_units, dense_units)
 
-    print("\n Resumen del modelo:")
+    print("\n📋 Resumen del modelo:")
     model.summary()
 
-    # Callbacks
     early_stop = EarlyStopping(
         monitor="val_loss",
-        patience=5,
+        patience=15,
+        min_delta=0.003,
         restore_best_weights=True,
         verbose=1
     )
@@ -195,11 +177,11 @@ def train_rnn(
         monitor="val_loss",
         patience=3,
         factor=0.5,
-        min_lr=0.0001,
+        min_lr=0.0003,
         verbose=1
     )
 
-    print("\n Entrenando RNN sin memoria...")
+    print("\n🚀 Entrenando RNN sin memoria...")
     history = model.fit(
         X_train, y_train,
         epochs=epochs,
@@ -210,27 +192,14 @@ def train_rnn(
         verbose=1
     )
 
-    # Evaluar
-    print("\n Evaluando modelo...")
+    print("\n📊 Evaluando modelo...")
     evaluate_model(model, X_test, y_test, encoder, f"RNN_{folder_name}", save_path)
     plot_history(history, f"RNN_{folder_name}", save_path)
 
-    # Guardar
     model.save(os.path.join(save_path, "model.keras"))
     with open(os.path.join(save_path, "tokenizer.json"), "w") as f:
         json.dump(tokenizer.to_json(), f)
 
-    print(f"\n Resultados guardados en: {save_path}")
+    print(f"\n✅ Resultados guardados en: {save_path}")
 
     return model, history
-
-if __name__ == "__main__":
-    train_rnn(
-        cleaning_method="clean_standard",
-        embedding_dim=64,
-        rnn_units=64,
-        dense_units=32,
-        epochs=15,
-        batch_size=32,
-        use_class_weights=True
-    )
