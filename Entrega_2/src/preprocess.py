@@ -1,3 +1,7 @@
+"""
+Módulo de preprocesamiento de tweets
+Limpieza optimizada conservando información emocional
+"""
 import pandas as pd
 import re
 import os
@@ -30,9 +34,11 @@ def clean_twitter_optimized(text):
     text = text.lower()
     # 9. Limpiar espacios extra
     text = re.sub(r"\s+", " ", text).strip()
+    
     return text
 
 def load_raw_data():
+    """Cargar datos crudos desde CSV"""
     try:
         if not os.path.exists(DATA_PATH):
             raise FileNotFoundError(f"No se encontró el archivo: {DATA_PATH}")
@@ -55,6 +61,7 @@ def preprocess_data(df):
     return result_df
 
 def save_processed(df):
+    """Guardar datos procesados"""
     output_path = "data/processed_tweets.csv"
     df.to_csv(output_path, index=False)
 
@@ -100,6 +107,10 @@ def plot_cleaning_effects(df):
     plt.show()
 
 def run_preprocess():
+    """Ejecutar todo el pipeline de preprocesamiento"""
+    print("🚀 INICIANDO PREPROCESAMIENTO")
+    print("-" * 40)
+    
     df = load_raw_data()
     if df is not None:
         df = preprocess_data(df)
