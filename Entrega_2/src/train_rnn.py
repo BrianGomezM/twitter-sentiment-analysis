@@ -91,7 +91,7 @@ def create_rnn_model(
         Embedding(max_words, embedding_dim, input_length=max_len),
         Dropout(0.4),
 
-        #  RNN SIN memoria
+        # NN SIN memoria
         SimpleRNN(
             rnn_units,
             activation="tanh",
