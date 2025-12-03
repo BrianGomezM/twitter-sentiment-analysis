@@ -22,7 +22,7 @@ from collections import Counter
 MAX_WORDS = 8000
 MAX_LEN = 40
 
-from src.utils import plot_history, evaluate_model
+from src.utils_rnn import plot_history, evaluate_model
 
 
 def print_class_distribution(labels, title="Distribución de clases"):
