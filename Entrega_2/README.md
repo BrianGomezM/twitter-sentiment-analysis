@@ -10,7 +10,6 @@ Profesora: Deisy Chaves
 Estudiantes:
 - Valentina Barbetty Arango - 2310050
 - Brayan Gomez Muñoz - 2310016
-- Jheison Gomez Muñoz - 2310215
 
 Proyecto: Twitter US Airline Sentiment Dataset
 
@@ -51,7 +50,7 @@ INSTALLATION & SETUP
 2. Navigate to the project folder:
     cd twitter_sentiment_analysis
 3. Create a virtual environment (recommended):
-    py -3.11 -m venv venv  
+     py -3.10 -m venv venv   
 4. Activate the environment:
     Windows: .\venv\Scripts\Activate.ps1 
     Linux/macOS: source env/bin/activate

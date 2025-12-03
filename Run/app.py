@@ -12,42 +12,50 @@ from html import unescape
 
 app = FastAPI(
     title="Sentiment Analysis API",
-    description="API para analizar sentimiento usando modelos LSTM y RNN",
-    version="1.0.0"
+    description="API para analizar sentimiento usando modelos LSTM o RNN",
+    version="2.0.0"
 )
 
-
-# ------------------------------
-# CONFIG GENERAL
-# ------------------------------
+# ------------------------------------
+# CONFIGURACIÓN
+# ------------------------------------
 MAX_LEN = 40
 LABELS = ["negative", "neutral", "positive"]
 
+# corregido: usar SOLO modelos/tokenizers que EXISTEN
+MODELS = {
+    "lstm": {
+        "model_path": "models_lstm/best_model_EXP4_REGULARIZADO.keras",
+        "tokenizer_path": "models_lstm/tokenizer_EXP3_AVANZADO.json",
+        "type": "LSTM Bidirectional"
+    },
+    "rnn": {
+        "model_path": "models_rnn/clean_emb100_rnn64_ep130model.keras",
+        "tokenizer_path": "models_rnn/clean_emb100_rnn64_ep130tokenizer.json",
+        "type": "Simple RNN"
+    }
+}
 
-# ------------------------------
-# REPARACIÓN AUTOMÁTICA DEL TOKENIZER
-# ------------------------------
+loaded_models = {}
+loaded_tokenizers = {}
+
+
+# ------------------------------------
+# UTILIDADES
+# ------------------------------------
 def load_tokenizer(path):
     with open(path, "r", encoding="utf-8") as f:
         raw = f.read()
 
-    # Caso 1: JSON correcto
     try:
         return tokenizer_from_json(raw)
     except:
-        pass
-
-    # Caso 2: JSON mal guardado (doble codificación)
-    obj = json.loads(raw)
-    if isinstance(obj, str):
-        obj = json.loads(obj)
-
-    return tokenizer_from_json(json.dumps(obj))
+        obj = json.loads(raw)
+        if isinstance(obj, str):
+            obj = json.loads(obj)
+        return tokenizer_from_json(json.dumps(obj))
 
 
-# ------------------------------
-# LIMPIEZA IGUAL A TU MODELO
-# ------------------------------
 def clean_text(text):
     text = unescape(text)
     text = emoji.demojize(text, delimiters=(" ", " "))
@@ -62,55 +70,91 @@ def clean_text(text):
     return text
 
 
-# ------------------------------
-# CARGAR MODELOS (solo 1 por defecto)
-# ------------------------------
-MODEL_PATH = "models_lstm/best_model_EXP4_REGULARIZADO.h5"
-TOKENIZER_PATH = "models_lstm/tokenizer_EXP4_REGULARIZADO.json"
+# ------------------------------------
+# CARGA BAJO DEMANDA
+# ------------------------------------
+def get_model(model_name):
 
-model = load_model(MODEL_PATH)
-tokenizer = load_tokenizer(TOKENIZER_PATH)
+    if model_name not in MODELS:
+        return None, None
+
+    if model_name not in loaded_models:
+        print(f"⏳ Loading model {model_name}...")
+
+        mpath = MODELS[model_name]["model_path"]
+        tpath = MODELS[model_name]["tokenizer_path"]
+
+        loaded_models[model_name] = load_model(mpath)
+        loaded_tokenizers[model_name] = load_tokenizer(tpath)
+
+    return loaded_models[model_name], loaded_tokenizers[model_name]
 
 
-
-# ------------------------------
-# INPUT DE LA API
-# ------------------------------
+# ------------------------------------
+# REQUEST BODY
+# ------------------------------------
 class PredictionInput(BaseModel):
+    model: str  # "lstm" o "rnn"
     text: str
 
 
-
-# ------------------------------
+# ------------------------------------
 # ENDPOINT PRINCIPAL
-# ------------------------------
+# ------------------------------------
 @app.post("/predict")
-def predict_sentiment(item: PredictionInput):
-    clean = clean_text(item.text)
+def predict_sentiment(body: PredictionInput):
+
+    model, tokenizer = get_model(body.model)
+
+    if model is None:
+        return {"error": "Modelo inválido. Usa 'lstm' o 'rnn'."}
+
+    clean = clean_text(body.text)
     seq = tokenizer.texts_to_sequences([clean])
     padded = pad_sequences(seq, maxlen=MAX_LEN, padding="post")
 
     probs = model.predict(padded)[0].tolist()
     idx = int(np.argmax(probs))
-    sentiment = LABELS[idx]
+    label = LABELS[idx]
+
+    polarity = probs[2] - probs[0]
+
+    color_map = {
+        "positive": "#4CAF50",
+        "neutral": "#FFC107",
+        "negative": "#F44336"
+    }
+
+    emoji_map = {
+        "positive": "😊",
+        "neutral": "😐",
+        "negative": "😠"
+    }
 
     return {
-        "input_text": item.text,
-        "cleaned": clean,
-        "sentiment": sentiment,
+        "input_text": body.text,
+        "cleaned_text": clean,
+        "sentiment": label,
+        "confidence": round(probs[idx], 4),
         "probabilities": {
-            "negative": probs[0],
-            "neutral": probs[1],
-            "positive": probs[2]
+            "negative": round(probs[0], 4),
+            "neutral": round(probs[1], 4),
+            "positive": round(probs[2], 4)
         },
-        "model_used": MODEL_PATH
+        "polarity_index": round(float(polarity), 4),
+        "emoji": emoji_map[label],
+        "color": color_map[label],
+        "model_info": {
+            "name": body.model,
+            "type": MODELS[body.model]["type"],
+            "path": MODELS[body.model]["model_path"]
+        }
     }
 
 
-
-# ------------------------------
-# ENDPOINT DE PRUEBA
-# ------------------------------
 @app.get("/")
 def root():
-    return {"message": "API is running ✔ Sentiment Analyzer Ready 🚀"}
+    return {
+        "message": "Sentiment API running 🔥",
+        "models_available": list(MODELS.keys())
+    }
