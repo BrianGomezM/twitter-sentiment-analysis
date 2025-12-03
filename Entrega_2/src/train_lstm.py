@@ -32,62 +32,56 @@ def lr_warmup(epoch, lr):
     return lr
 
 def create_lstm_model(embedding_dim=64, lstm_units=64, dense_units=32):
+
     model = Sequential([
-        Embedding(input_dim=MAX_WORDS,
-                 output_dim=embedding_dim,
-                 input_length=MAX_LEN,
-                 mask_zero=True,  
-                 name="embedding",
-                 embeddings_regularizer=l2(0.001)),  
-        BatchNormalization(name="batch_norm_embedding"),
+        Embedding(
+            input_dim=MAX_WORDS,
+            output_dim=embedding_dim,
+            mask_zero=True,
+            name="embedding",
+            embeddings_regularizer=l2(0.001)
+        ),
+
         Bidirectional(
-            LSTM(units=lstm_units,
-                 dropout=0.4,          
-                 recurrent_dropout=0.2, 
-                 kernel_regularizer=l2(0.001),  
-                 recurrent_regularizer=l2(0.001),
-                 bias_regularizer=l2(0.001),
-                 return_sequences=False,
-                 name="lstm"),
+            LSTM(
+                units=lstm_units,
+                dropout=0.4,
+                recurrent_regularizer=l2(0.001),
+                kernel_regularizer=l2(0.001),
+                bias_regularizer=l2(0.001),
+                return_sequences=False
+            ),
             name="bidirectional_lstm"
         ),
+
         BatchNormalization(name="batch_norm_lstm"),
-        Dropout(0.4, name="dropout_1"),
-        Dense(units=dense_units,
-              activation='relu',
-              kernel_regularizer=l2(0.001),
-              bias_regularizer=l2(0.001),
-              name="dense_1"),
-        BatchNormalization(name="batch_norm_dense1"),
-        Dropout(0.3, name="dropout_2"),
-        Dense(units=dense_units//2,
-              activation='relu',
-              kernel_regularizer=l2(0.001),
-              bias_regularizer=l2(0.001),
-              name="dense_2"),
-        
-        BatchNormalization(name="batch_norm_dense2"),
-        Dropout(0.2, name="dropout_3"),
-        Dense(units=3,
-              activation='softmax',
-              kernel_regularizer=l2(0.001),
-              bias_regularizer=l2(0.001),
-              name="output")
+        Dropout(0.4),
+
+        Dense(
+            units=dense_units,
+            activation="relu",
+            kernel_regularizer=l2(0.001)
+        ),
+        BatchNormalization(),
+        Dropout(0.3),
+
+        Dense(
+            units=dense_units // 2,
+            activation="relu",
+            kernel_regularizer=l2(0.001)
+        ),
+        BatchNormalization(),
+        Dropout(0.2),
+
+        Dense(3, activation="softmax")
     ])
-    
-    optimizer = Adam(
-        learning_rate=0.001,  
-        clipnorm=1.0,        
-        beta_1=0.9,
-        beta_2=0.999
-    )
-    
+
     model.compile(
-        optimizer=optimizer,
-        loss='categorical_crossentropy',
-        metrics=['accuracy']
+        optimizer=Adam(learning_rate=0.001, clipnorm=1.0),
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
     )
-    
+
     return model
 
 def calculate_advanced_metrics(y_true, y_pred, encoder):
@@ -165,7 +159,7 @@ def train_lstm_model(cleaning_method="clean_text",
     )
     lr_scheduler = LearningRateScheduler(lr_warmup, verbose=1)
     checkpoint = ModelCheckpoint(
-        filepath=f'models/best_model_{experiment_name}.h5',
+        filepath=f'models/best_model_{experiment_name}.keras',
         monitor='val_accuracy',
         save_best_only=True,
         verbose=1
