@@ -58,7 +58,10 @@ INSTALLATION & SETUP
 5. Install dependencies:
     pip install -r requirements.txt
 6. Ejecución
-    python main.py
+    py main.py  : El lstm
+    py main_rnn.py   : Rnn normal  
+7. Ejecutar modelos
+    py .\src\predict_sentiment.py
 
 ===========================================================
 REQUIREMENTS / LIBRARY VERSIONS
